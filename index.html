@@ -1,0 +1,839 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Durchflusssensoren – Messprinzipien interaktiv</title>
+  <style>
+    :root {
+      --bg: #f4f7fb;
+      --card: #ffffff;
+      --primary: #163a63;
+      --primary-light: #2f5f96;
+      --accent: #d9e6f5;
+      --accent-2: #eef4fb;
+      --text: #1f2937;
+      --muted: #6b7280;
+      --border: #d8e0ea;
+      --good: #dff4e4;
+      --bad: #fde7e7;
+      --use: #fff4d6;
+      --shadow: 0 12px 30px rgba(0,0,0,0.08);
+      --radius: 18px;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: Arial, Helvetica, sans-serif;
+      color: var(--text);
+      background: linear-gradient(180deg, #eef3f9 0%, #f8fbff 100%);
+    }
+
+    header {
+      position: relative;
+      background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+      color: white;
+      padding: 28px 22px 26px 22px;
+      overflow: hidden;
+    }
+
+    .brand-row {
+      display: flex;
+      justify-content: flex-end;
+      align-items: flex-start;
+      gap: 14px;
+      margin-bottom: 10px;
+      flex-wrap: wrap;
+    }
+
+    .brand-row img {
+      background: white;
+      border-radius: 12px;
+      padding: 6px;
+      box-shadow: 0 6px 18px rgba(0,0,0,0.18);
+      object-fit: contain;
+    }
+
+    .logo { width: 100px; height: 100px; }
+    .qr { width: 92px; height: 92px; }
+
+    h1 {
+      margin: 0 0 12px 0;
+      font-size: 2rem;
+      line-height: 1.2;
+    }
+
+    .subtitle {
+      max-width: 980px;
+      font-size: 1.05rem;
+      line-height: 1.6;
+      opacity: 0.97;
+      margin-bottom: 10px;
+    }
+
+    main {
+      max-width: 1280px;
+      margin: 0 auto;
+      padding: 24px 18px 40px;
+    }
+
+    .intro, .quiz-box {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 20px;
+      margin-bottom: 22px;
+    }
+
+    .intro-grid {
+      display: grid;
+      grid-template-columns: 1.3fr 0.9fr;
+      gap: 20px;
+    }
+
+    .pill-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 14px;
+    }
+
+    .pill {
+      background: var(--accent-2);
+      color: var(--primary);
+      border: 1px solid #c7d7ea;
+      border-radius: 999px;
+      padding: 8px 14px;
+      font-size: 0.95rem;
+      font-weight: bold;
+    }
+
+    .legend-box {
+      background: #f9fbfe;
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 16px;
+    }
+
+    .section-title {
+      margin: 0 0 10px 0;
+      color: var(--primary);
+      font-size: 1.25rem;
+    }
+
+    .controls {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-top: 12px;
+    }
+
+    button {
+      border: none;
+      background: var(--primary);
+      color: white;
+      padding: 11px 16px;
+      border-radius: 12px;
+      cursor: pointer;
+      font-size: 0.95rem;
+      font-weight: bold;
+      transition: transform 0.15s ease, background 0.2s ease;
+    }
+
+    button:hover { transform: translateY(-1px); }
+    button.secondary { background: #5c6f82; }
+    button.active { background: #0b6b8a; }
+
+    .sensor-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(320px, 1fr));
+      gap: 22px;
+    }
+
+    .sensor-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .sensor-head {
+      background: linear-gradient(180deg, #f7fbff 0%, #edf4fb 100%);
+      padding: 18px 18px 12px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .sensor-head h2 {
+      margin: 0 0 8px 0;
+      color: var(--primary);
+      font-size: 1.35rem;
+    }
+
+    .sensor-head p {
+      margin: 0;
+      color: var(--muted);
+      line-height: 1.5;
+    }
+
+    .visual-box {
+      padding: 18px;
+      background: #fbfdff;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .visual-box svg {
+      width: 100%;
+      height: auto;
+      display: block;
+      background: white;
+      border: 1px solid var(--border);
+      border-radius: 14px;
+    }
+
+    .body {
+      padding: 18px;
+      display: grid;
+      gap: 14px;
+    }
+
+    .info-block {
+      border-radius: 14px;
+      padding: 14px 15px;
+      border: 1px solid var(--border);
+      background: #fafcff;
+    }
+
+    .info-block h3 {
+      margin: 0 0 10px 0;
+      font-size: 1rem;
+      color: var(--primary);
+    }
+
+    .info-block p, .info-block li {
+      line-height: 1.55;
+      font-size: 0.98rem;
+    }
+
+    .pros { background: var(--good); }
+    .cons { background: var(--bad); }
+    .uses { background: var(--use); }
+
+    ul { margin: 0; padding-left: 20px; }
+
+    .compare {
+      margin-top: 28px;
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 20px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 12px;
+      background: white;
+      border-radius: 14px;
+      overflow: hidden;
+    }
+
+    th, td {
+      border: 1px solid var(--border);
+      padding: 12px;
+      text-align: left;
+      vertical-align: top;
+      line-height: 1.45;
+    }
+
+    th {
+      background: #edf4fb;
+      color: var(--primary);
+    }
+
+    .quiz-question {
+      font-size: 1.05rem;
+      margin-bottom: 14px;
+    }
+
+    .quiz-options {
+      display: grid;
+      gap: 10px;
+      margin-bottom: 14px;
+    }
+
+    .quiz-option {
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 12px 14px;
+      background: #f9fbfe;
+      cursor: pointer;
+      transition: 0.15s ease;
+    }
+
+    .quiz-option:hover {
+      border-color: var(--primary-light);
+      transform: translateY(-1px);
+    }
+
+    .quiz-option.correct {
+      background: #dff4e4;
+      border-color: #68b57c;
+    }
+
+    .quiz-option.wrong {
+      background: #fde7e7;
+      border-color: #d98989;
+    }
+
+    .feedback {
+      min-height: 26px;
+      font-weight: bold;
+    }
+
+    .hidden { display: none !important; }
+
+    footer {
+      max-width: 1280px;
+      margin: 0 auto;
+      padding: 0 18px 34px;
+      color: var(--muted);
+      text-align: center;
+      font-size: 0.95rem;
+    }
+
+    footer a {
+      color: var(--primary);
+      font-weight: bold;
+      text-decoration: none;
+    }
+
+    @media (max-width: 980px) {
+      .intro-grid, .sensor-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 640px) {
+      h1 { font-size: 1.6rem; }
+      .brand-row { justify-content: center; }
+      .logo, .qr { width: 82px; height: 82px; }
+      main { padding: 18px 12px 32px; }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="brand-row">
+      <img class="qr" src="QRCode.png" alt="QR-Code" onerror="this.style.display='none'">
+      <img class="logo" src="FTS_logo.png" alt="FTS Logo" onerror="this.style.display='none'">
+    </div>
+    <h1>Durchflusssensoren – Messprinzipien interaktiv</h1>
+    <div class="subtitle">
+      Auf dieser Seite lernen Sie verschiedene Messprinzipien von Durchflusssensoren kennen. Zu jedem Sensor sehen Sie eine schematische Abbildung,
+      eine kurze Erklärung, typische Vor- und Nachteile sowie Beispiele aus der Praxis.
+    </div>
+  </header>
+
+  <main>
+    <section class="intro">
+      <div class="intro-grid">
+        <div>
+          <h2 class="section-title">Was misst ein Durchflusssensor?</h2>
+          <p>
+            Ein Durchflusssensor misst, wie viel Flüssigkeit oder Gas pro Zeit durch ein Rohr oder einen Kanal strömt.
+            Je nach Anwendung werden unterschiedliche Messprinzipien eingesetzt. Manche Sensoren arbeiten mit beweglichen Teilen,
+            andere mit Schall, Druck, Temperatur oder elektromagnetischen Effekten.
+          </p>
+          <div class="pill-row">
+            <div class="pill">Flüssigkeiten</div>
+            <div class="pill">Gase</div>
+            <div class="pill">Industrie</div>
+            <div class="pill">Haustechnik</div>
+            <div class="pill">Automatisierung</div>
+          </div>
+          <div class="controls">
+            <button id="showAllBtn" class="active">Alle anzeigen</button>
+            <button id="showLiquidBtn" class="secondary">Vor allem für Flüssigkeiten</button>
+            <button id="showGasBtn" class="secondary">Vor allem für Gase</button>
+          </div>
+        </div>
+        <div class="legend-box">
+          <h2 class="section-title">Orientierung</h2>
+          <p><strong>Grün:</strong> Vorteile</p>
+          <p><strong>Rot:</strong> Nachteile</p>
+          <p><strong>Gelb:</strong> Typische Einsätze</p>
+          <p>
+            Die Abbildungen sind schematisch. Sie sollen das Messprinzip verständlich machen und nicht den exakten industriellen Aufbau zeigen.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <section class="sensor-grid" id="sensorGrid">
+      <article class="sensor-card" data-type="liquid both">
+        <div class="sensor-head">
+          <h2>1. Flügelrad- / Turbinensensor</h2>
+          <p>Ein durchströmtes Flügelrad dreht sich. Ein Hall-Sensor oder Reed-Kontakt zählt die Umdrehungen.</p>
+        </div>
+        <div class="visual-box">
+          <svg viewBox="0 0 600 260" role="img" aria-label="Schematische Darstellung eines Flügelrad-Durchflusssensors">
+            <rect x="40" y="90" width="520" height="80" rx="35" fill="#d9e6f5" stroke="#2f5f96" stroke-width="4"/>
+            <polygon points="95,130 70,115 70,145" fill="#2f5f96"/>
+            <polygon points="505,130 530,115 530,145" fill="#2f5f96"/>
+            <circle cx="300" cy="130" r="38" fill="#ffffff" stroke="#163a63" stroke-width="4"/>
+            <line x1="300" y1="92" x2="300" y2="168" stroke="#163a63" stroke-width="4"/>
+            <line x1="262" y1="130" x2="338" y2="130" stroke="#163a63" stroke-width="4"/>
+            <line x1="273" y1="103" x2="327" y2="157" stroke="#163a63" stroke-width="4"/>
+            <line x1="327" y1="103" x2="273" y2="157" stroke="#163a63" stroke-width="4"/>
+            <rect x="350" y="45" width="70" height="40" rx="8" fill="#fff4d6" stroke="#8a6b00" stroke-width="3"/>
+            <line x1="385" y1="85" x2="360" y2="102" stroke="#8a6b00" stroke-width="3"/>
+            <text x="385" y="70" text-anchor="middle" font-size="18" fill="#5b4b00" font-weight="bold">Sensor</text>
+            <text x="300" y="220" text-anchor="middle" font-size="22" fill="#163a63" font-weight="bold">Drehzahl ∼ Durchfluss</text>
+          </svg>
+        </div>
+        <div class="body">
+          <div class="info-block">
+            <h3>Kurz erklärt</h3>
+            <p>
+              Das strömende Medium setzt ein Flügelrad in Bewegung. Je größer der Durchfluss ist, desto schneller dreht sich das Rad.
+              Die Elektronik zählt die Umdrehungen und berechnet daraus den Volumenstrom.
+            </p>
+          </div>
+          <div class="info-block pros">
+            <h3>Vorteile</h3>
+            <ul>
+              <li>Einfaches, gut verständliches Messprinzip</li>
+              <li>Relativ kostengünstig</li>
+              <li>Gut für kleine bis mittlere Wassermengen</li>
+            </ul>
+          </div>
+          <div class="info-block cons">
+            <h3>Nachteile</h3>
+            <ul>
+              <li>Bewegliche Teile können verschleißen</li>
+              <li>Empfindlich gegenüber Schmutz und Kalk</li>
+              <li>Druckverlust durch Einbauten im Rohr</li>
+            </ul>
+          </div>
+          <div class="info-block uses">
+            <h3>Praxiseinsatz</h3>
+            <ul>
+              <li>Kaffeemaschinen</li>
+              <li>Gartenbewässerung</li>
+              <li>Wassergeräte und einfache Dosiersysteme</li>
+            </ul>
+          </div>
+        </div>
+      </article>
+
+      <article class="sensor-card" data-type="liquid both">
+        <div class="sensor-head">
+          <h2>2. Differenzdrucksensor</h2>
+          <p>Eine Verengung im Rohr erzeugt einen Druckunterschied. Dieser wird gemessen und daraus der Durchfluss berechnet.</p>
+        </div>
+        <div class="visual-box">
+          <svg viewBox="0 0 600 260" role="img" aria-label="Schematische Darstellung eines Differenzdruck-Durchflusssensors">
+            <path d="M40 95 H225 L270 115 H330 L375 95 H560 V165 H375 L330 145 H270 L225 165 H40 Z" fill="#d9e6f5" stroke="#2f5f96" stroke-width="4"/>
+            <line x1="205" y1="60" x2="205" y2="95" stroke="#163a63" stroke-width="4"/>
+            <line x1="395" y1="60" x2="395" y2="95" stroke="#163a63" stroke-width="4"/>
+            <rect x="150" y="20" width="300" height="36" rx="10" fill="#fff4d6" stroke="#8a6b00" stroke-width="3"/>
+            <text x="300" y="44" text-anchor="middle" font-size="18" fill="#5b4b00" font-weight="bold">Druck vor und nach der Engstelle</text>
+            <polygon points="95,130 70,115 70,145" fill="#2f5f96"/>
+            <polygon points="505,130 530,115 530,145" fill="#2f5f96"/>
+            <text x="300" y="222" text-anchor="middle" font-size="22" fill="#163a63" font-weight="bold">Δp → Berechnung des Durchflusses</text>
+          </svg>
+        </div>
+        <div class="body">
+          <div class="info-block">
+            <h3>Kurz erklärt</h3>
+            <p>
+              An einer Engstelle verändert sich die Strömungsgeschwindigkeit. Dadurch entsteht ein Druckunterschied zwischen zwei Messstellen.
+              Aus diesem Differenzdruck lässt sich der Durchfluss berechnen.
+            </p>
+          </div>
+          <div class="info-block pros">
+            <h3>Vorteile</h3>
+            <ul>
+              <li>Robustes, bewährtes Verfahren</li>
+              <li>Auch für hohe Drücke und Temperaturen geeignet</li>
+              <li>In der Industrie weit verbreitet</li>
+            </ul>
+          </div>
+          <div class="info-block cons">
+            <h3>Nachteile</h3>
+            <ul>
+              <li>Druckverlust durch die Engstelle</li>
+              <li>Auswertung aufwendiger als bei einfachen Impulssensoren</li>
+              <li>Messgenauigkeit abhängig von Einbaubedingungen</li>
+            </ul>
+          </div>
+          <div class="info-block uses">
+            <h3>Praxiseinsatz</h3>
+            <ul>
+              <li>Prozessindustrie</li>
+              <li>Heizungs- und Lüftungstechnik</li>
+              <li>Messungen in Rohrleitungen großer Anlagen</li>
+            </ul>
+          </div>
+        </div>
+      </article>
+
+      <article class="sensor-card" data-type="liquid gas both">
+        <div class="sensor-head">
+          <h2>3. Ultraschall-Durchflusssensor</h2>
+          <p>Ultraschallsignale laufen mit und gegen die Strömung unterschiedlich schnell durch das Medium.</p>
+        </div>
+        <div class="visual-box">
+          <svg viewBox="0 0 600 260" role="img" aria-label="Schematische Darstellung eines Ultraschall-Durchflusssensors">
+            <rect x="50" y="90" width="500" height="80" rx="35" fill="#d9e6f5" stroke="#2f5f96" stroke-width="4"/>
+            <rect x="110" y="70" width="45" height="40" rx="8" fill="#fff4d6" stroke="#8a6b00" stroke-width="3" transform="rotate(-18 132 90)"/>
+            <rect x="445" y="150" width="45" height="40" rx="8" fill="#fff4d6" stroke="#8a6b00" stroke-width="3" transform="rotate(-18 467 170)"/>
+            <line x1="145" y1="103" x2="454" y2="158" stroke="#163a63" stroke-width="4" stroke-dasharray="10 7"/>
+            <line x1="145" y1="157" x2="454" y2="102" stroke="#2f5f96" stroke-width="4" stroke-dasharray="10 7"/>
+            <polygon points="95,130 70,115 70,145" fill="#2f5f96"/>
+            <polygon points="505,130 530,115 530,145" fill="#2f5f96"/>
+            <text x="300" y="222" text-anchor="middle" font-size="22" fill="#163a63" font-weight="bold">Laufzeitdifferenz der Schallwellen</text>
+          </svg>
+        </div>
+        <div class="body">
+          <div class="info-block">
+            <h3>Kurz erklärt</h3>
+            <p>
+              Zwei Wandler senden und empfangen Ultraschall. Strömt das Medium, dann ist die Laufzeit in Strömungsrichtung anders als gegen die Strömungsrichtung.
+              Aus dieser Differenz wird der Durchfluss bestimmt.
+            </p>
+          </div>
+          <div class="info-block pros">
+            <h3>Vorteile</h3>
+            <ul>
+              <li>Keine beweglichen Teile</li>
+              <li>Sehr geringer Verschleiß</li>
+              <li>Teilweise auch von außen am Rohr montierbar</li>
+            </ul>
+          </div>
+          <div class="info-block cons">
+            <h3>Nachteile</h3>
+            <ul>
+              <li>Relativ teuer</li>
+              <li>Signalqualität abhängig vom Medium</li>
+              <li>Einbau und Kalibrierung teils anspruchsvoll</li>
+            </ul>
+          </div>
+          <div class="info-block uses">
+            <h3>Praxiseinsatz</h3>
+            <ul>
+              <li>Wasserversorgung</li>
+              <li>Industrielle Rohrsysteme</li>
+              <li>Messungen ohne Eingriff ins Rohr</li>
+            </ul>
+          </div>
+        </div>
+      </article>
+
+      <article class="sensor-card" data-type="liquid">
+        <div class="sensor-head">
+          <h2>4. Magnetisch-induktiver Sensor</h2>
+          <p>Ein leitfähiges Medium bewegt sich durch ein Magnetfeld. Dabei entsteht eine messbare Spannung.</p>
+        </div>
+        <div class="visual-box">
+          <svg viewBox="0 0 600 260" role="img" aria-label="Schematische Darstellung eines magnetisch-induktiven Durchflusssensors">
+            <rect x="90" y="80" width="420" height="100" rx="22" fill="#d9e6f5" stroke="#2f5f96" stroke-width="4"/>
+            <rect x="240" y="25" width="120" height="44" rx="10" fill="#fff4d6" stroke="#8a6b00" stroke-width="3"/>
+            <rect x="240" y="191" width="120" height="44" rx="10" fill="#fff4d6" stroke="#8a6b00" stroke-width="3"/>
+            <text x="300" y="53" text-anchor="middle" font-size="18" fill="#5b4b00" font-weight="bold">Magnet</text>
+            <text x="300" y="219" text-anchor="middle" font-size="18" fill="#5b4b00" font-weight="bold">Magnet</text>
+            <line x1="300" y1="69" x2="300" y2="191" stroke="#163a63" stroke-width="4" marker-end="url(#arrowMag)"/>
+            <circle cx="170" cy="130" r="10" fill="#163a63"/>
+            <circle cx="430" cy="130" r="10" fill="#163a63"/>
+            <line x1="180" y1="130" x2="420" y2="130" stroke="#163a63" stroke-width="3" stroke-dasharray="8 6"/>
+            <polygon points="130,130 105,115 105,145" fill="#2f5f96"/>
+            <polygon points="470,130 495,115 495,145" fill="#2f5f96"/>
+            <text x="300" y="248" text-anchor="middle" font-size="22" fill="#163a63" font-weight="bold">Spannung ∼ Fließgeschwindigkeit</text>
+            <defs>
+              <marker id="arrowMag" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto" markerUnits="strokeWidth">
+                <path d="M0,0 L0,6 L9,3 z" fill="#163a63" />
+              </marker>
+            </defs>
+          </svg>
+        </div>
+        <div class="body">
+          <div class="info-block">
+            <h3>Kurz erklärt</h3>
+            <p>
+              Fließt eine leitfähige Flüssigkeit durch ein Magnetfeld, wird zwischen zwei Elektroden eine elektrische Spannung erzeugt.
+              Diese Spannung ist ein Maß für die Strömungsgeschwindigkeit und damit für den Durchfluss.
+            </p>
+          </div>
+          <div class="info-block pros">
+            <h3>Vorteile</h3>
+            <ul>
+              <li>Keine beweglichen Teile im Messkanal</li>
+              <li>Geeignet für verschmutzte oder aggressive Flüssigkeiten</li>
+              <li>Hohe Genauigkeit bei leitfähigen Medien</li>
+            </ul>
+          </div>
+          <div class="info-block cons">
+            <h3>Nachteile</h3>
+            <ul>
+              <li>Nur für elektrisch leitfähige Flüssigkeiten geeignet</li>
+              <li>Für Gase nicht nutzbar</li>
+              <li>Relativ hoher Gerätepreis</li>
+            </ul>
+          </div>
+          <div class="info-block uses">
+            <h3>Praxiseinsatz</h3>
+            <ul>
+              <li>Wasser- und Abwassertechnik</li>
+              <li>Lebensmittel- und Chemieindustrie</li>
+              <li>Prozessmesstechnik</li>
+            </ul>
+          </div>
+        </div>
+      </article>
+
+      <article class="sensor-card" data-type="gas both">
+        <div class="sensor-head">
+          <h2>5. Thermischer Durchflusssensor</h2>
+          <p>Ein beheiztes Element wird durch das vorbeiströmende Medium abgekühlt. Die Kühlung hängt vom Durchfluss ab.</p>
+        </div>
+        <div class="visual-box">
+          <svg viewBox="0 0 600 260" role="img" aria-label="Schematische Darstellung eines thermischen Durchflusssensors">
+            <rect x="40" y="90" width="520" height="80" rx="35" fill="#d9e6f5" stroke="#2f5f96" stroke-width="4"/>
+            <polygon points="95,130 70,115 70,145" fill="#2f5f96"/>
+            <polygon points="505,130 530,115 530,145" fill="#2f5f96"/>
+            <rect x="270" y="103" width="60" height="54" rx="10" fill="#ffdf9a" stroke="#b87000" stroke-width="3"/>
+            <path d="M300 88 C290 75, 297 68, 300 58 C303 68, 310 75, 300 88 Z" fill="#f08c00"/>
+            <path d="M322 95 C314 84, 320 78, 323 70 C326 78, 332 84, 322 95 Z" fill="#f5aa2b"/>
+            <path d="M278 95 C270 84, 276 78, 279 70 C282 78, 288 84, 278 95 Z" fill="#f5aa2b"/>
+            <text x="300" y="222" text-anchor="middle" font-size="22" fill="#163a63" font-weight="bold">Mehr Strömung → stärkere Kühlung</text>
+          </svg>
+        </div>
+        <div class="body">
+          <div class="info-block">
+            <h3>Kurz erklärt</h3>
+            <p>
+              Im Sensor befindet sich ein kleines beheiztes Element. Strömt das Medium vorbei, wird Wärme abgeführt.
+              Aus der Abkühlung oder der nötigen Heizleistung bestimmt die Elektronik den Durchfluss.
+            </p>
+          </div>
+          <div class="info-block pros">
+            <h3>Vorteile</h3>
+            <ul>
+              <li>Besonders gut für Gase geeignet</li>
+              <li>Sehr empfindlich bei kleinen Durchflüssen</li>
+              <li>Keine mechanisch rotierenden Teile notwendig</li>
+            </ul>
+          </div>
+          <div class="info-block cons">
+            <h3>Nachteile</h3>
+            <ul>
+              <li>Stark abhängig von den Eigenschaften des Mediums</li>
+              <li>Temperaturänderungen können Einfluss haben</li>
+              <li>Für verschmutzte Medien oft ungünstig</li>
+            </ul>
+          </div>
+          <div class="info-block uses">
+            <h3>Praxiseinsatz</h3>
+            <ul>
+              <li>Luft- und Gasströmungen</li>
+              <li>Medizintechnik</li>
+              <li>Lüftungs- und Analysesysteme</li>
+            </ul>
+          </div>
+        </div>
+      </article>
+    </section>
+
+    <section class="compare">
+      <h2 class="section-title">Vergleich der Messprinzipien</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>Messprinzip</th>
+            <th>Typische Medien</th>
+            <th>Besonders gut geeignet, wenn ...</th>
+            <th>Wichtige Einschränkung</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Flügelrad / Turbine</td>
+            <td>Vor allem Wasser</td>
+            <td>eine einfache und kostengünstige Lösung gebraucht wird</td>
+            <td>Verschleiß durch bewegliche Teile</td>
+          </tr>
+          <tr>
+            <td>Differenzdruck</td>
+            <td>Flüssigkeiten und Gase</td>
+            <td>robuste Industriemessung gefordert ist</td>
+            <td>Druckverlust im Rohr</td>
+          </tr>
+          <tr>
+            <td>Ultraschall</td>
+            <td>Flüssigkeiten, teils auch Gase</td>
+            <td>berührungslos oder verschleißarm gemessen werden soll</td>
+            <td>teurer und aufwendiger</td>
+          </tr>
+          <tr>
+            <td>Magnetisch-induktiv</td>
+            <td>Leitfähige Flüssigkeiten</td>
+            <td>genau und ohne bewegliche Teile gemessen werden soll</td>
+            <td>nur für leitfähige Medien</td>
+          </tr>
+          <tr>
+            <td>Thermisch</td>
+            <td>Vor allem Gase</td>
+            <td>kleine Gasströme sehr empfindlich erfasst werden sollen</td>
+            <td>stark abhängig vom Medium</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section class="quiz-box">
+      <h2 class="section-title">Kurzer Wissenstest</h2>
+      <div class="quiz-question" id="quizQuestion">Welcher Sensor arbeitet mit einem drehenden Flügelrad?</div>
+      <div class="quiz-options" id="quizOptions"></div>
+      <div class="feedback" id="quizFeedback"></div>
+      <div class="controls">
+        <button id="nextQuestionBtn">Nächste Frage</button>
+        <button id="resetQuizBtn" class="secondary">Quiz zurücksetzen</button>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <p><a href="impressum.html">Impressum</a></p>
+  </footer>
+
+  <script>
+    const cards = Array.from(document.querySelectorAll('.sensor-card'));
+    const showAllBtn = document.getElementById('showAllBtn');
+    const showLiquidBtn = document.getElementById('showLiquidBtn');
+    const showGasBtn = document.getElementById('showGasBtn');
+
+    function setActiveButton(activeBtn) {
+      [showAllBtn, showLiquidBtn, showGasBtn].forEach(btn => {
+        btn.classList.remove('active');
+        if (!btn.classList.contains('secondary')) btn.classList.add('secondary');
+      });
+      activeBtn.classList.add('active');
+      activeBtn.classList.remove('secondary');
+    }
+
+    function filterCards(mode) {
+      cards.forEach(card => {
+        const type = card.dataset.type;
+        const show = mode === 'all' || type.includes(mode) || type.includes('both');
+        card.classList.toggle('hidden', !show);
+      });
+    }
+
+    showAllBtn.addEventListener('click', () => {
+      setActiveButton(showAllBtn);
+      filterCards('all');
+    });
+
+    showLiquidBtn.addEventListener('click', () => {
+      setActiveButton(showLiquidBtn);
+      filterCards('liquid');
+    });
+
+    showGasBtn.addEventListener('click', () => {
+      setActiveButton(showGasBtn);
+      filterCards('gas');
+    });
+
+    const questions = [
+      {
+        q: 'Welcher Sensor arbeitet mit einem drehenden Flügelrad?',
+        options: ['Ultraschall-Durchflusssensor', 'Flügelrad- / Turbinensensor', 'Thermischer Sensor'],
+        correct: 1,
+        feedback: 'Richtig. Beim Flügelrad- oder Turbinensensor wird die Drehzahl des Rads ausgewertet.'
+      },
+      {
+        q: 'Welches Messprinzip ist nur für leitfähige Flüssigkeiten geeignet?',
+        options: ['Magnetisch-induktiv', 'Differenzdruck', 'Flügelrad'],
+        correct: 0,
+        feedback: 'Richtig. Magnetisch-induktive Sensoren benötigen ein elektrisch leitfähiges Medium.'
+      },
+      {
+        q: 'Welcher Sensor eignet sich besonders gut für kleine Gasströme?',
+        options: ['Thermischer Durchflusssensor', 'Flügelrad- / Turbinensensor', 'Magnetisch-induktiver Sensor'],
+        correct: 0,
+        feedback: 'Richtig. Thermische Sensoren sind besonders empfindlich bei kleinen Gasdurchflüssen.'
+      },
+      {
+        q: 'Bei welchem Verfahren wird eine Laufzeitdifferenz von Schallwellen ausgewertet?',
+        options: ['Differenzdruck', 'Ultraschall', 'Flügelrad'],
+        correct: 1,
+        feedback: 'Richtig. Ultraschallsensoren bestimmen den Durchfluss aus der Laufzeitdifferenz.'
+      },
+      {
+        q: 'Welches Verfahren verursacht typischerweise einen zusätzlichen Druckverlust durch eine Engstelle?',
+        options: ['Differenzdruckmessung', 'Ultraschallmessung', 'Thermische Messung'],
+        correct: 0,
+        feedback: 'Richtig. Die Engstelle erzeugt den nötigen Differenzdruck, verursacht aber auch Druckverlust.'
+      }
+    ];
+
+    let currentQuestion = 0;
+    const quizQuestion = document.getElementById('quizQuestion');
+    const quizOptions = document.getElementById('quizOptions');
+    const quizFeedback = document.getElementById('quizFeedback');
+    const nextQuestionBtn = document.getElementById('nextQuestionBtn');
+    const resetQuizBtn = document.getElementById('resetQuizBtn');
+
+    function renderQuestion() {
+      const item = questions[currentQuestion];
+      quizQuestion.textContent = item.q;
+      quizOptions.innerHTML = '';
+      quizFeedback.textContent = '';
+
+      item.options.forEach((option, index) => {
+        const div = document.createElement('div');
+        div.className = 'quiz-option';
+        div.textContent = option;
+        div.addEventListener('click', () => checkAnswer(div, index));
+        quizOptions.appendChild(div);
+      });
+    }
+
+    function checkAnswer(selectedEl, selectedIndex) {
+      const item = questions[currentQuestion];
+      const options = Array.from(document.querySelectorAll('.quiz-option'));
+
+      options.forEach((opt, idx) => {
+        opt.style.pointerEvents = 'none';
+        if (idx === item.correct) opt.classList.add('correct');
+      });
+
+      if (selectedIndex === item.correct) {
+        quizFeedback.textContent = item.feedback;
+      } else {
+        selectedEl.classList.add('wrong');
+        quizFeedback.textContent = 'Nicht ganz. ' + item.feedback;
+      }
+    }
+
+    nextQuestionBtn.addEventListener('click', () => {
+      currentQuestion = (currentQuestion + 1) % questions.length;
+      renderQuestion();
+    });
+
+    resetQuizBtn.addEventListener('click', () => {
+      currentQuestion = 0;
+      renderQuestion();
+    });
+
+    renderQuestion();
+  </script>
+</body>
+</html>
